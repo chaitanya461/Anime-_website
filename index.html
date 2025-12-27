@@ -393,7 +393,7 @@
             box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
         }
 
-        /* Episodes Section */
+        /* Episodes Section - Updated with better scrollbar */
         .episodes-section {
             display: none;
             margin-top: 1rem;
@@ -403,36 +403,60 @@
             width: 100%;
         }
 
-        .episodes-title {
-            color: var(--accent);
-            margin-bottom: 1rem;
-            font-size: 1.2rem;
+        .episodes-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .episodes-title {
+            color: var(--accent);
+            font-size: 1.2rem;
+        }
+
+        /* Fixed episodes container with vertical scroll */
+        .episodes-scroll-container {
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 0.5rem;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Custom scrollbar for episodes container */
+        .episodes-scroll-container::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .episodes-scroll-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+
+        .episodes-scroll-container::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 4px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .episodes-scroll-container::-webkit-scrollbar-thumb:hover {
+            background: #ff5252;
+        }
+
+        /* For Firefox */
+        .episodes-scroll-container {
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent) rgba(255, 255, 255, 0.1);
         }
 
         .episodes-container {
             display: flex;
             gap: 0.5rem;
             flex-wrap: wrap;
-            max-height: 200px;
-            overflow-y: auto;
             padding: 0.5rem;
-        }
-
-        .episodes-container::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .episodes-container::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-        }
-
-        .episodes-container::-webkit-scrollbar-thumb {
-            background: var(--accent);
-            border-radius: 4px;
+            min-height: 0;
         }
 
         .episode-btn {
@@ -445,21 +469,25 @@
             transition: all 0.3s;
             min-width: 60px;
             text-align: center;
+            flex-shrink: 0;
         }
 
         .episode-btn:hover {
             background-color: rgba(255, 107, 107, 0.3);
             border-color: var(--accent);
+            transform: translateY(-2px);
         }
 
         .episode-btn.active {
             background-color: var(--accent);
             border-color: var(--accent);
             color: white;
+            box-shadow: 0 4px 8px rgba(255, 107, 107, 0.3);
         }
 
         .episode-btn.working {
             border-color: var(--success);
+            background-color: rgba(76, 175, 80, 0.2);
         }
 
         /* Player Info */
@@ -599,6 +627,10 @@
             .video-wrapper {
                 height: 50%;
             }
+            
+            .episodes-scroll-container {
+                max-height: 180px;
+            }
         }
 
         @media (max-width: 768px) {
@@ -621,6 +653,16 @@
             .season-btn {
                 min-width: 80px;
                 padding: 0.6rem 1rem;
+            }
+            
+            .episodes-scroll-container {
+                max-height: 150px;
+            }
+            
+            .episode-btn {
+                min-width: 50px;
+                padding: 0.4rem 0.8rem;
+                font-size: 0.9rem;
             }
         }
 
@@ -649,6 +691,16 @@
                 min-width: 70px;
                 padding: 0.5rem 0.8rem;
                 font-size: 0.9rem;
+            }
+            
+            .episodes-scroll-container {
+                max-height: 120px;
+            }
+            
+            .episode-btn {
+                min-width: 45px;
+                padding: 0.3rem 0.6rem;
+                font-size: 0.8rem;
             }
         }
     </style>
@@ -752,11 +804,13 @@
         <!-- Episodes Section -->
         <div class="episodes-section" id="episodes-section">
             <div class="episodes-header">
-                <span id="episodes-title">Episodes</span>
+                <span class="episodes-title" id="episodes-title">Episodes</span>
                 <span id="episodes-count"></span>
             </div>
-            <div class="episodes-scroll-container" id="episodes-container">
-                <!-- Episode buttons will be dynamically added here -->
+            <div class="episodes-scroll-container" id="episodes-scroll-container">
+                <div class="episodes-container" id="episodes-container">
+                    <!-- Episode buttons will be dynamically added here -->
+                </div>
             </div>
         </div>
         
@@ -824,6 +878,7 @@
         const seasonsCount = document.getElementById('seasons-count');
         const episodesSection = document.getElementById('episodes-section');
         const episodesTitle = document.getElementById('episodes-title');
+        const episodesScrollContainer = document.getElementById('episodes-scroll-container');
         const episodesContainer = document.getElementById('episodes-container');
         const episodesCount = document.getElementById('episodes-count');
         const sourceStatusElement = document.getElementById('source-status');
@@ -1577,8 +1632,7 @@
                     // Scroll to active episode
                     episodeBtn.scrollIntoView({ 
                         behavior: 'smooth', 
-                        block: 'center',
-                        inline: 'center'
+                        block: 'center'
                     });
                     
                     // Reload video with new episode
@@ -1597,8 +1651,7 @@
                 setTimeout(() => {
                     activeEpisode.scrollIntoView({ 
                         behavior: 'smooth', 
-                        block: 'center',
-                        inline: 'center'
+                        block: 'center'
                     });
                 }, 100);
             }
@@ -1652,4 +1705,3 @@
     </script>
 </body>
 </html>
-
