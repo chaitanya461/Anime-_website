@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnimeStream Pro - Watch Anime Series & Movies</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #0a0a23;
+            --secondary: #1c1c3c;
+            --accent: #ff6b6b;
+            --success: #4CAF50;
+            --warning: #ff9800;
+            --info: #2196F3;
+            --text: #ffffff;
+            --text-secondary: #b0b0b0;
+        }
+
+        body {
+            background-color: var(--primary);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--secondary);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        .search-container {
+            display: flex;
+            width: 50%;
+            max-width: 500px;
+        }
+
+        #search-input {
+            flex-grow: 1;
+            padding: 0.8rem 1rem;
+            border: none;
+            border-radius: 25px 0 0 25px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text);
+            font-size: 1rem;
+            outline: none;
+        }
+
+        #search-button {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 0 25px 25px 0;
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        #search-button:hover {
+            background-color: #ff5252;
+        }
+
+        /* Filter Bar */
+        .filter-bar {
+            background-color: var(--secondary);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            border-bottom: 2px solid rgba(255, 107, 107, 0.3);
+            position: sticky;
+            top: 80px;
+            z-index: 999;
+        }
+
+        .filter-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .filter-section h3 {
+            color: var(--accent);
+            font-size: 1rem;
+            white-space: nowrap;
+        }
+
+        .categories, .genres {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            list-style: none;
+        }
+
+        .categories li, .genres li {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+        }
+
+        .categories li:hover, .genres li:hover {
+            background-color: rgba(255, 107, 107, 0.2);
+            border-color: var(--accent);
+        }
+
+        .categories li.active, .genres li.active {
+            background-color: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        /* Main Content Area */
+        .main-content {
+            padding: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Anime Grid */
+        .anime-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .anime-card {
+            background-color: var(--secondary);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .anime-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .anime-poster {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+        }
+
+        .anime-info {
+            padding: 1rem;
+        }
+
+        .anime-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .anime-details {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .video-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--success);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: block;
+        }
+
+        /* Video Player */
+        .video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+            padding: 1rem;
+        }
+
+        .player-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        #close-player {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 2rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        #close-player:hover {
+            color: var(--accent);
+        }
+
+        .video-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            width: 100%;
+            height: 60%;
+        }
+
+        /* Video with scrollbar */
+        .video-scroll-container {
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            background-color: #000;
+            border-radius: 10px;
+        }
+
+        .video-scroll-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Custom scrollbar for video container */
+        .video-scroll-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .video-scroll-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        .video-scroll-container::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 4px;
+        }
+
+        .video-scroll-container::-webkit-scrollbar-thumb:hover {
+            background: #ff5252;
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text);
+            font-size: 1.2rem;
+            display: none;
+            flex-direction: column;
+            gap: 1.5rem;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .loading-spinner {
+            font-size: 3rem;
+            color: var(--accent);
+        }
+
+        .loading-text {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+
+        /* Seasons Section */
+        .seasons-section {
+            display: none;
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: rgba(28, 28, 60, 0.9);
+            border-radius: 10px;
+            width: 100%;
+        }
+
+        .seasons-title {
+            color: var(--accent);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .seasons-container {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            padding: 0.5rem;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent) rgba(255, 255, 255, 0.1);
+        }
+
+        .seasons-container::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .seasons-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        .seasons-container::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 4px;
+        }
+
+        .season-btn {
+            padding: 0.8rem 1.5rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: var(--text);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 100px;
+            text-align: center;
+            flex-shrink: 0;
+            font-weight: 600;
+        }
+
+        .season-btn:hover {
+            background-color: rgba(255, 107, 107, 0.3);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .season-btn.active {
+            background-color: var(--accent);
+            border-color: var(--accent);
+            color: white;
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+        }
+
+        /* Episodes Section */
+        .episodes-section {
+            display: none;
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: rgba(28, 28, 60, 0.8);
+            border-radius: 10px;
+            width: 100%;
+            max-height: 250px;
+            overflow: hidden;
+        }
+
+        .episodes-header {
+            color: var(--accent);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-right: 8px;
+        }
+
+        /* Episodes Container with Vertical Scroll */
+        .episodes-scroll-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            max-height: 180px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 5px;
+            padding-right: 8px;
+        }
+
+        .episodes-scroll-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .episodes-scroll-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+
+        .episodes-scroll-container::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 4px;
+        }
+
+        .episodes-scroll-container::-webkit-scrollbar-thumb:hover {
+            background: #ff5252;
+        }
+
+        .episode-btn {
+            padding: 0.5rem 1rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 60px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .episode-btn:hover {
+            background-color: rgba(255, 107, 107, 0.3);
+            border-color: var(--accent);
+        }
+
+        .episode-btn.active {
+            background-color: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        /* Player Info */
+        .player-info {
+            padding: 1rem;
+            text-align: center;
+            width: 100%;
+        }
+
+        .source-status {
+            margin-top: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            display: inline-block;
+            font-weight: 600;
+        }
+
+        .source-status.consumet {
+            background-color: rgba(33, 150, 243, 0.2);
+            border: 2px solid var(--info);
+            color: var(--info);
+        }
+
+        .source-status.vidsrc {
+            background-color: rgba(76, 175, 80, 0.2);
+            border: 2px solid var(--success);
+            color: var(--success);
+        }
+
+        .source-status.fallback {
+            background-color: rgba(255, 152, 0, 0.2);
+            border: 2px solid var(--warning);
+            color: var(--warning);
+        }
+
+        /* Loading & Error States */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+        }
+
+        .error-message {
+            background-color: rgba(255, 107, 107, 0.1);
+            border-left: 4px solid var(--accent);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .page-button {
+            background-color: var(--secondary);
+            color: var(--text);
+            border: none;
+            padding: 0.7rem 1.2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .page-button:hover:not(:disabled) {
+            background-color: var(--accent);
+        }
+
+        .page-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .page-indicator {
+            color: var(--text-secondary);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .filter-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            
+            .filter-section {
+                width: 100%;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .search-container {
+                width: 100%;
+                max-width: 100%;
+            }
+            
+            .anime-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            
+            .video-wrapper {
+                height: 50%;
+            }
+            
+            .episodes-section {
+                max-height: 220px;
+            }
+            
+            .episodes-scroll-container {
+                max-height: 150px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .categories, .genres {
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+                width: 100%;
+            }
+            
+            .categories li, .genres li {
+                flex-shrink: 0;
+            }
+            
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            
+            .season-btn {
+                min-width: 80px;
+                padding: 0.6rem 1rem;
+            }
+            
+            .episodes-section {
+                max-height: 200px;
+            }
+            
+            .episodes-scroll-container {
+                max-height: 130px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .search-container {
+                width: 100%;
+            }
+            
+            .anime-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+            
+            .anime-poster {
+                height: 180px;
+            }
+            
+            .video-wrapper {
+                height: 40%;
+            }
+            
+            .seasons-container {
+                gap: 0.5rem;
+            }
+            
+            .season-btn {
+                min-width: 70px;
+                padding: 0.5rem 0.8rem;
+                font-size: 0.9rem;
+            }
+            
+            .episodes-section {
+                max-height: 180px;
+                padding: 0.8rem;
+            }
+            
+            .episodes-scroll-container {
+                max-height: 110px;
+            }
+            
+            .episode-btn {
+                min-width: 50px;
+                padding: 0.4rem 0.8rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <i class="fas fa-play-circle"></i>
+            <span>AnimeStream Pro</span>
+        </div>
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search for anime...">
+            <button id="search-button"><i class="fas fa-search"></i> Search</button>
+        </div>
+    </header>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <div class="filter-section">
+            <h3>Categories:</h3>
+            <ul class="categories">
+                <li class="active" data-category="popular">Popular</li>
+                <li data-category="top_rated">Top Rated</li>
+                <li data-category="airing">Airing Now</li>
+                <li data-category="upcoming">Upcoming</li>
+                <li data-category="movie">Movies</li>
+            </ul>
+        </div>
+        
+        <div class="filter-section">
+            <h3>Genres:</h3>
+            <ul class="genres">
+                <li data-genre="16">Animation</li>
+                <li data-genre="28">Action</li>
+                <li data-genre="12">Adventure</li>
+                <li data-genre="35">Comedy</li>
+                <li data-genre="14">Fantasy</li>
+                <li data-genre="878">Sci-Fi</li>
+                <li data-genre="10759">Action & Adventure</li>
+                <li data-genre="10765">Sci-Fi & Fantasy</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <h2 class="section-title">
+            <span id="section-title">Popular Anime</span>
+            <span id="loading-indicator" style="display: none; font-size: 1rem;">
+                <i class="fas fa-spinner fa-spin"></i> Loading...
+            </span>
+        </h2>
+        
+        <div id="anime-list" class="anime-grid">
+            <!-- Anime cards will be loaded here -->
+        </div>
+        
+        <!-- Pagination -->
+        <div class="pagination">
+            <button id="prev-page" class="page-button" disabled>
+                <i class="fas fa-chevron-left"></i> Previous
+            </button>
+            <span class="page-indicator">Page <span id="current-page">1</span> of <span id="total-pages">1</span></span>
+            <button id="next-page" class="page-button">
+                Next <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </main>
+
+    <!-- Video Player Modal -->
+    <div class="video-container" id="video-container">
+        <div class="player-header">
+            <h2 id="video-title">Anime Title</h2>
+            <button id="close-player">&times;</button>
+        </div>
+        <div class="video-wrapper">
+            <div class="video-scroll-container" id="video-scroll-container">
+                <!-- Video will be loaded here -->
+            </div>
+            <div class="loading-overlay" id="video-loading">
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+                <div class="loading-text">Loading video...</div>
+            </div>
+        </div>
+        
+        <!-- Seasons Section -->
+        <div class="seasons-section" id="seasons-section">
+            <div class="seasons-title">
+                <span>Seasons</span>
+                <span id="seasons-count"></span>
+            </div>
+            <div class="seasons-container" id="seasons-container">
+                <!-- Season buttons will be dynamically added here -->
+            </div>
+        </div>
+        
+        <!-- Episodes Section -->
+        <div class="episodes-section" id="episodes-section">
+            <div class="episodes-header">
+                <span id="episodes-title">Episodes</span>
+                <span id="episodes-count"></span>
+            </div>
+            <div class="episodes-scroll-container" id="episodes-container">
+                <!-- Episode buttons will be dynamically added here -->
+            </div>
+        </div>
+        
+        <div class="player-info">
+            <div id="source-status" class="source-status vidsrc">
+                <i class="fas fa-check-circle"></i>
+                <span id="source-status-text">Video Ready</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // TMDB API Configuration
+        const TMDB_API_KEY = 'cacc35c61cd76805987aca08d540f24e';
+        const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
+        const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w500';
+        
+        // Consumet API Configuration
+        const CONSUMET_API_BASE = 'https://consumet-api-org-six.vercel.app';
+        
+        // VidSrc Domains
+        const VIDSRC_DOMAINS = [
+            'vidsrc.xyz',
+            'vidsrc-embed.ru',
+            'vidsrc-embed.su', 
+            'vidsrcme.su',
+            'vsrc.su'
+        ];
+        
+        // State management
+        let currentCategory = 'popular';
+        let currentGenre = null;
+        let currentPage = 1;
+        let totalPages = 1;
+        let searchQuery = '';
+        let currentVideoId = null;
+        let currentVideoType = null;
+        let currentTitle = '';
+        let totalSeasons = 1;
+        let totalEpisodes = 20;
+        let currentSeason = 1;
+        let currentEpisode = 1;
+        let currentSourceIndex = 0;
+        let seasonData = {};
+        let videoCheckTimeout = null;
+        let currentConsumetId = null;
+        
+        // DOM Elements
+        const animeListElement = document.getElementById('anime-list');
+        const sectionTitleElement = document.getElementById('section-title');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const videoContainer = document.getElementById('video-container');
+        const videoScrollContainer = document.getElementById('video-scroll-container');
+        const videoTitleElement = document.getElementById('video-title');
+        const videoLoading = document.getElementById('video-loading');
+        const closePlayerButton = document.getElementById('close-player');
+        const searchInput = document.getElementById('search-input');
+        const searchButton = document.getElementById('search-button');
+        const prevPageButton = document.getElementById('prev-page');
+        const nextPageButton = document.getElementById('next-page');
+        const currentPageElement = document.getElementById('current-page');
+        const totalPagesElement = document.getElementById('total-pages');
+        const seasonsSection = document.getElementById('seasons-section');
+        const seasonsContainer = document.getElementById('seasons-container');
+        const seasonsCount = document.getElementById('seasons-count');
+        const episodesSection = document.getElementById('episodes-section');
+        const episodesTitle = document.getElementById('episodes-title');
+        const episodesContainer = document.getElementById('episodes-container');
+        const episodesCount = document.getElementById('episodes-count');
+        const sourceStatusElement = document.getElementById('source-status');
+        const sourceStatusText = document.getElementById('source-status-text');
+        
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchAnime();
+            
+            // Event listeners for category buttons
+            document.querySelectorAll('.categories li').forEach(button => {
+                button.addEventListener('click', () => {
+                    // Remove active class from all category buttons
+                    document.querySelectorAll('.categories li').forEach(btn => btn.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    button.classList.add('active');
+                    
+                    // Reset to first page
+                    currentPage = 1;
+                    
+                    // Set category and clear genre
+                    currentCategory = button.dataset.category;
+                    currentGenre = null;
+                    searchQuery = '';
+                    
+                    // Remove active class from genre buttons
+                    document.querySelectorAll('.genres li').forEach(btn => btn.classList.remove('active'));
+                    
+                    // Update section title
+                    const categoryTitles = {
+                        'popular': 'Popular Anime',
+                        'top_rated': 'Top Rated Anime',
+                        'airing': 'Currently Airing',
+                        'upcoming': 'Upcoming Anime',
+                        'movie': 'Anime Movies'
+                    };
+                    sectionTitleElement.textContent = categoryTitles[currentCategory] || 'Anime';
+                    fetchAnime();
+                });
+            });
+            
+            // Event listeners for genre buttons
+            document.querySelectorAll('.genres li').forEach(button => {
+                button.addEventListener('click', () => {
+                    // Remove active class from all genre buttons
+                    document.querySelectorAll('.genres li').forEach(btn => btn.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    button.classList.add('active');
+                    
+                    // Remove active class from category buttons
+                    document.querySelectorAll('.categories li').forEach(btn => btn.classList.remove('active'));
+                    
+                    // Reset to first page
+                    currentPage = 1;
+                    
+                    // Set genre and clear category
+                    currentGenre = button.dataset.genre;
+                    currentCategory = null;
+                    searchQuery = '';
+                    
+                    // Update section title
+                    sectionTitleElement.textContent = button.textContent + ' Anime';
+                    fetchAnimeByGenre(currentGenre);
+                });
+            });
+            
+            // Search functionality
+            searchButton.addEventListener('click', performSearch);
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+            
+            // Pagination
+            prevPageButton.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    fetchAnime();
+                }
+            });
+            
+            nextPageButton.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    fetchAnime();
+                }
+            });
+            
+            // Video player close button
+            closePlayerButton.addEventListener('click', () => {
+                closeVideoPlayer();
+            });
+            
+            // Close video player on background click
+            videoContainer.addEventListener('click', (e) => {
+                if (e.target === videoContainer) {
+                    closeVideoPlayer();
+                }
+            });
+        });
+        
+        // Close video player
+        function closeVideoPlayer() {
+            videoContainer.style.display = 'none';
+            videoScrollContainer.innerHTML = '';
+            seasonsSection.style.display = 'none';
+            episodesSection.style.display = 'none';
+            seasonsContainer.innerHTML = '';
+            episodesContainer.innerHTML = '';
+            clearTimeout(videoCheckTimeout);
+            videoLoading.style.display = 'none';
+        }
+        
+        // Perform search
+        function performSearch() {
+            searchQuery = searchInput.value.trim();
+            if (searchQuery) {
+                currentCategory = null;
+                currentGenre = null;
+                currentPage = 1;
+                
+                // Clear active states from filter buttons
+                document.querySelectorAll('.categories li, .genres li').forEach(btn => btn.classList.remove('active'));
+                
+                sectionTitleElement.textContent = `Search: ${searchQuery}`;
+                fetchSearchResults();
+            }
+        }
+        
+        // Fetch anime based on current filters
+        async function fetchAnime() {
+            showLoading(true);
+            
+            let url;
+            
+            if (currentCategory === 'movie') {
+                // Fetch anime movies
+                url = `${TMDB_BASE_URL}/discover/movie?api_key=${TMDB_API_KEY}&with_genres=16&page=${currentPage}`;
+            } else if (currentCategory === 'airing') {
+                // Fetch currently airing TV shows
+                url = `${TMDB_BASE_URL}/discover/tv?api_key=${TMDB_API_KEY}&with_genres=16&with_status=Returning%20Series&sort_by=popularity.desc&page=${currentPage}`;
+            } else if (currentCategory === 'upcoming') {
+                // Fetch upcoming TV shows
+                url = `${TMDB_BASE_URL}/discover/tv?api_key=${TMDB_API_KEY}&with_genres=16&air_date.gte=${getCurrentDate()}&sort_by=first_air_date.asc&page=${currentPage}`;
+            } else if (currentCategory) {
+                // Fetch TV anime series
+                url = `${TMDB_BASE_URL}/discover/tv?api_key=${TMDB_API_KEY}&with_genres=16&sort_by=${getSortBy(currentCategory)}&page=${currentPage}`;
+            } else if (currentGenre) {
+                // Fetch by genre
+                url = `${TMDB_BASE_URL}/discover/tv?api_key=${TMDB_API_KEY}&with_genres=${currentGenre}&page=${currentPage}`;
+            }
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                displayAnime(data.results);
+                updatePagination(data.page, data.total_pages);
+            } catch (error) {
+                showError('Failed to fetch anime. Please try again later.');
+                console.error('Error fetching anime:', error);
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        // Fetch anime by genre
+        async function fetchAnimeByGenre(genreId) {
+            showLoading(true);
+            
+            const url = `${TMDB_BASE_URL}/discover/tv?api_key=${TMDB_API_KEY}&with_genres=${genreId}&page=${currentPage}`;
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                displayAnime(data.results);
+                updatePagination(data.page, data.total_pages);
+            } catch (error) {
+                showError('Failed to fetch anime by genre. Please try again later.');
+                console.error('Error fetching anime by genre:', error);
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        // Fetch search results
+        async function fetchSearchResults() {
+            showLoading(true);
+            
+            // Search for TV shows (anime) and movies
+            const url = `${TMDB_BASE_URL}/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(searchQuery)}&page=${currentPage}&include_adult=false`;
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                // Filter to only include TV shows and movies (anime)
+                const filteredResults = data.results.filter(item => {
+                    return (item.media_type === 'tv' || item.media_type === 'movie') && 
+                           (item.genre_ids && item.genre_ids.includes(16));
+                });
+                
+                displayAnime(filteredResults);
+                updatePagination(data.page, data.total_pages);
+            } catch (error) {
+                showError('Failed to search anime. Please try again later.');
+                console.error('Error searching anime:', error);
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        // Display anime in the grid
+        function displayAnime(animeArray) {
+            animeListElement.innerHTML = '';
+            
+            if (!animeArray || animeArray.length === 0) {
+                animeListElement.innerHTML = '<div class="error-message">No anime found. Try a different search or category.</div>';
+                return;
+            }
+            
+            animeArray.forEach((anime, index) => {
+                const isMovie = anime.media_type === 'movie' || currentCategory === 'movie';
+                const title = anime.title || anime.name || 'Unknown Title';
+                const posterPath = anime.poster_path ? TMDB_IMAGE_BASE + anime.poster_path : getPlaceholderImage(title);
+                const releaseDate = anime.release_date || anime.first_air_date || 'Unknown';
+                const year = releaseDate.substring(0, 4) || 'N/A';
+                const rating = anime.vote_average ? anime.vote_average.toFixed(1) : 'N/A';
+                const animeId = anime.id;
+                const mediaType = isMovie ? 'movie' : 'tv';
+                
+                const animeCard = document.createElement('div');
+                animeCard.className = 'anime-card';
+                animeCard.dataset.id = animeId;
+                animeCard.dataset.type = mediaType;
+                animeCard.dataset.title = title;
+                
+                animeCard.innerHTML = `
+                    <img src="${posterPath}" alt="${title}" class="anime-poster" onerror="this.src='${getPlaceholderImage(title)}'">
+                    <div class="video-badge">
+                        <i class="fas fa-bolt"></i> Auto-Stream
+                    </div>
+                    <div class="anime-info">
+                        <div class="anime-title">${title}</div>
+                        <div class="anime-details">
+                            <span>${year}</span>
+                            <span><i class="fas fa-star" style="color: #ffd700;"></i> ${rating}</span>
+                        </div>
+                    </div>
+                `;
+                
+                animeCard.addEventListener('click', () => {
+                    playAnime(animeId, mediaType, title);
+                });
+                
+                animeListElement.appendChild(animeCard);
+            });
+        }
+        
+        // Play anime video
+        async function playAnime(id, type, title) {
+            currentVideoId = id;
+            currentVideoType = type;
+            currentTitle = title;
+            currentSeason = 1;
+            currentEpisode = 1;
+            currentSourceIndex = 0;
+            currentConsumetId = null;
+            
+            videoTitleElement.textContent = title;
+            videoContainer.style.display = 'flex';
+            videoLoading.style.display = 'flex';
+            
+            // Reset sections
+            seasonsSection.style.display = 'none';
+            episodesSection.style.display = 'none';
+            seasonsContainer.innerHTML = '';
+            episodesContainer.innerHTML = '';
+            videoScrollContainer.innerHTML = '';
+            
+            // Hide status initially
+            sourceStatusElement.style.display = 'none';
+            
+            // Try VidSrc first (more reliable)
+            await tryVidSrc();
+            
+            // If it's a TV series, fetch season information
+            if (type === 'tv') {
+                await fetchTVSeriesInfo(id, title);
+            }
+        }
+        
+        // Try VidSrc as primary source
+        async function tryVidSrc() {
+            // Try each VidSrc domain
+            for (const domain of VIDSRC_DOMAINS) {
+                try {
+                    let vidSrcUrl;
+                    if (currentVideoType === 'movie') {
+                        vidSrcUrl = `https://${domain}/embed/movie/${currentVideoId}`;
+                    } else {
+                        vidSrcUrl = `https://${domain}/embed/tv/${currentVideoId}/${currentSeason}/${currentEpisode}`;
+                    }
+                    
+                    // Test the URL with better validation
+                    const isAvailable = await testVideoSourceWithValidation(vidSrcUrl);
+                    
+                    if (isAvailable) {
+                        await loadVidSrcVideo(vidSrcUrl, domain);
+                        return;
+                    }
+                    
+                } catch (error) {
+                    console.log(`Domain ${domain} failed:`, error);
+                    continue;
+                }
+            }
+            
+            // If all VidSrc domains fail, try Consumet as fallback
+            await tryConsumetAPI();
+        }
+        
+        // Try Consumet API as fallback
+        async function tryConsumetAPI() {
+            try {
+                // Clean the title for search
+                const cleanTitle = cleanAnimeTitle(currentTitle);
+                
+                // Search for anime
+                const searchUrl = `${CONSUMET_API_BASE}/meta/anilist/advanced-search?query=${encodeURIComponent(cleanTitle)}`;
+                const searchResponse = await fetch(searchUrl);
+                
+                if (!searchResponse.ok) {
+                    throw new Error('Search failed');
+                }
+                
+                const searchData = await searchResponse.json();
+                
+                if (!searchData.results || searchData.results.length === 0) {
+                    throw new Error('No results found');
+                }
+                
+                // Find the best match
+                const bestMatch = searchData.results[0];
+                currentConsumetId = bestMatch.id;
+                
+                // Try to get episode info
+                const episodeUrl = `${CONSUMET_API_BASE}/meta/anilist/watch/${bestMatch.id}?episode=${currentEpisode}`;
+                const episodeResponse = await fetch(episodeUrl);
+                
+                if (!episodeResponse.ok) {
+                    throw new Error('Episode not found');
+                }
+                
+                const episodeData = await episodeResponse.json();
+                
+                if (!episodeData.sources || episodeData.sources.length === 0) {
+                    throw new Error('No video sources');
+                }
+                
+                // Find the best source
+                const iframeSource = episodeData.sources.find(s => 
+                    s.url && (s.url.includes('iframe') || s.url.includes('embed') || s.quality === 'default')
+                );
+                
+                if (iframeSource && iframeSource.url) {
+                    await loadConsumetVideo(iframeSource.url);
+                    return;
+                }
+                
+                // Try any valid URL
+                const validSource = episodeData.sources.find(s => 
+                    s.url && (s.url.startsWith('http') || s.url.startsWith('//'))
+                );
+                
+                if (validSource && validSource.url) {
+                    await loadConsumetVideo(validSource.url);
+                    return;
+                }
+                
+                throw new Error('No valid video sources');
+                
+            } catch (error) {
+                console.error('Consumet API error:', error);
+                // All sources failed
+                showVideoError();
+            }
+        }
+        
+        // Test video source with better validation
+        async function testVideoSourceWithValidation(url) {
+            return new Promise((resolve) => {
+                const testIframe = document.createElement('iframe');
+                testIframe.style.display = 'none';
+                testIframe.src = url;
+                
+                let resolved = false;
+                let hasContent = false;
+                
+                testIframe.onload = () => {
+                    // Check if iframe has actual content (not just loaded but empty)
+                    try {
+                        const iframeDoc = testIframe.contentDocument || testIframe.contentWindow.document;
+                        hasContent = iframeDoc && iframeDoc.body && iframeDoc.body.innerHTML.length > 100;
+                    } catch (e) {
+                        // Cross-origin restriction, assume it's valid
+                        hasContent = true;
+                    }
+                    
+                    if (!resolved) {
+                        resolved = true;
+                        resolve(hasContent);
+                        if (document.body.contains(testIframe)) {
+                            document.body.removeChild(testIframe);
+                        }
+                    }
+                };
+                
+                testIframe.onerror = () => {
+                    if (!resolved) {
+                        resolved = true;
+                        resolve(false);
+                        if (document.body.contains(testIframe)) {
+                            document.body.removeChild(testIframe);
+                        }
+                    }
+                };
+                
+                // Shorter timeout for faster fallback
+                setTimeout(() => {
+                    if (!resolved) {
+                        resolved = true;
+                        resolve(false);
+                        if (document.body.contains(testIframe)) {
+                            document.body.removeChild(testIframe);
+                        }
+                    }
+                }, 3000);
+                
+                document.body.appendChild(testIframe);
+            });
+        }
+        
+        // Load VidSrc video with better error handling
+        async function loadVidSrcVideo(videoUrl, domain) {
+            try {
+                // Create iframe
+                videoScrollContainer.innerHTML = '';
+                const iframe = document.createElement('iframe');
+                iframe.src = videoUrl;
+                iframe.width = '100%';
+                iframe.height = '100%';
+                iframe.style.border = 'none';
+                iframe.allowFullscreen = true;
+                iframe.allow = 'autoplay; fullscreen';
+                iframe.referrerPolicy = 'no-referrer';
+                
+                videoScrollContainer.appendChild(iframe);
+                
+                // Set timeout to check if video actually plays
+                clearTimeout(videoCheckTimeout);
+                videoCheckTimeout = setTimeout(() => {
+                    if (videoLoading.style.display === 'flex') {
+                        // Video didn't load in time, try next source
+                        console.log('VidSrc timeout, trying next source...');
+                        videoScrollContainer.innerHTML = '';
+                        tryConsumetAPI();
+                    }
+                }, 10000); // 10 second timeout
+                
+                // Check if iframe actually loads content
+                const checkIframeContent = () => {
+                    try {
+                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                        if (iframeDoc && iframeDoc.body && iframeDoc.body.innerHTML.length > 100) {
+                            // Iframe has content, video is loading
+                            clearTimeout(videoCheckTimeout);
+                            setTimeout(() => {
+                                if (videoLoading.style.display === 'flex') {
+                                    videoLoading.style.display = 'none';
+                                    updateSourceStatus('vidsrc');
+                                }
+                            }, 2000);
+                        }
+                    } catch (e) {
+                        // Cross-origin restriction, assume it's loading
+                        clearTimeout(videoCheckTimeout);
+                        setTimeout(() => {
+                            if (videoLoading.style.display === 'flex') {
+                                videoLoading.style.display = 'none';
+                                updateSourceStatus('vidsrc');
+                            }
+                        }, 2000);
+                    }
+                };
+                
+                // Check after a short delay
+                setTimeout(checkIframeContent, 1000);
+                
+                iframe.onload = () => {
+                    checkIframeContent();
+                };
+                
+                iframe.onerror = () => {
+                    console.log('VidSrc iframe error');
+                    videoScrollContainer.innerHTML = '';
+                    tryConsumetAPI();
+                };
+                
+            } catch (error) {
+                console.error('Error loading VidSrc video:', error);
+                videoScrollContainer.innerHTML = '';
+                tryConsumetAPI();
+            }
+        }
+        
+        // Load video from Consumet
+        async function loadConsumetVideo(videoUrl) {
+            try {
+                // Create video element
+                videoScrollContainer.innerHTML = '';
+                
+                if (videoUrl.includes('iframe') || videoUrl.includes('embed')) {
+                    // If it's an embed/iframe URL
+                    const iframe = document.createElement('iframe');
+                    iframe.src = videoUrl.startsWith('//') ? 'https:' + videoUrl : videoUrl;
+                    iframe.width = '100%';
+                    iframe.height = '100%';
+                    iframe.style.border = 'none';
+                    iframe.allowFullscreen = true;
+                    iframe.allow = 'autoplay; fullscreen';
+                    iframe.referrerPolicy = 'no-referrer';
+                    
+                    videoScrollContainer.appendChild(iframe);
+                    
+                    // Set timeout
+                    clearTimeout(videoCheckTimeout);
+                    videoCheckTimeout = setTimeout(() => {
+                        if (videoLoading.style.display === 'flex') {
+                            showVideoError();
+                        }
+                    }, 10000);
+                    
+                    iframe.onload = () => {
+                        videoLoading.style.display = 'none';
+                        updateSourceStatus('consumet');
+                    };
+                    
+                    iframe.onerror = () => {
+                        showVideoError();
+                    };
+                    
+                } else {
+                    // Try to create video player
+                    const videoElement = document.createElement('video');
+                    videoElement.src = videoUrl;
+                    videoElement.controls = true;
+                    videoElement.autoplay = true;
+                    videoElement.style.width = '100%';
+                    videoElement.style.height = '100%';
+                    
+                    videoScrollContainer.appendChild(videoElement);
+                    
+                    // Set timeout
+                    clearTimeout(videoCheckTimeout);
+                    videoCheckTimeout = setTimeout(() => {
+                        if (videoLoading.style.display === 'flex') {
+                            showVideoError();
+                        }
+                    }, 10000);
+                    
+                    videoElement.oncanplay = () => {
+                        videoLoading.style.display = 'none';
+                        updateSourceStatus('consumet');
+                    };
+                    
+                    videoElement.onerror = () => {
+                        showVideoError();
+                    };
+                }
+                
+            } catch (error) {
+                console.error('Error loading Consumet video:', error);
+                showVideoError();
+            }
+        }
+        
+        // Show video error
+        function showVideoError() {
+            videoLoading.style.display = 'flex';
+            sourceStatusElement.style.display = 'block';
+            sourceStatusElement.className = 'source-status fallback';
+            sourceStatusText.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Video unavailable';
+        }
+        
+        // Clean anime title for search
+        function cleanAnimeTitle(title) {
+            return title
+                .toLowerCase()
+                .replace(/[^a-z0-9\s]/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+        
+        // Update source status display
+        function updateSourceStatus(sourceType) {
+            sourceStatusElement.style.display = 'block';
+            if (sourceType === 'consumet') {
+                sourceStatusElement.className = 'source-status consumet';
+                sourceStatusText.innerHTML = '<i class="fas fa-check-circle"></i> Video Ready';
+            } else if (sourceType === 'vidsrc') {
+                sourceStatusElement.className = 'source-status vidsrc';
+                sourceStatusText.innerHTML = '<i class="fas fa-check-circle"></i> Video Ready';
+            }
+        }
+        
+        // Fetch TV series information
+        async function fetchTVSeriesInfo(id, title) {
+            try {
+                // Fetch TV series details
+                const url = `${TMDB_BASE_URL}/tv/${id}?api_key=${TMDB_API_KEY}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                totalSeasons = data.number_of_seasons || 1;
+                totalEpisodes = data.number_of_episodes || 0;
+                
+                // Show seasons section
+                seasonsSection.style.display = 'block';
+                seasonsCount.textContent = `(${totalSeasons} Seasons)`;
+                
+                // Create season buttons
+                createSeasonButtons();
+                
+                // Load first season episodes
+                await loadSeasonEpisodes(1);
+                
+            } catch (error) {
+                console.error('Error fetching TV series info:', error);
+                // Create default season buttons
+                seasonsSection.style.display = 'block';
+                seasonsCount.textContent = '(1 Season)';
+                createDefaultSeasonButtons();
+            }
+        }
+        
+        // Create season buttons
+        function createSeasonButtons() {
+            seasonsContainer.innerHTML = '';
+            
+            for (let i = 1; i <= totalSeasons; i++) {
+                const seasonBtn = document.createElement('button');
+                seasonBtn.className = 'season-btn';
+                if (i === currentSeason) seasonBtn.classList.add('active');
+                seasonBtn.textContent = `Season ${i}`;
+                seasonBtn.dataset.season = i;
+                
+                seasonBtn.addEventListener('click', async () => {
+                    // Update current season
+                    currentSeason = parseInt(seasonBtn.dataset.season);
+                    currentEpisode = 1;
+                    
+                    // Update active button
+                    document.querySelectorAll('.season-btn').forEach(btn => btn.classList.remove('active'));
+                    seasonBtn.classList.add('active');
+                    
+                    // Load episodes for this season
+                    await loadSeasonEpisodes(currentSeason);
+                    
+                    // Reload video with new season
+                    videoLoading.style.display = 'flex';
+                    sourceStatusElement.style.display = 'none';
+                    videoScrollContainer.innerHTML = '';
+                    await tryVidSrc();
+                });
+                
+                seasonsContainer.appendChild(seasonBtn);
+            }
+        }
+        
+        // Create default season buttons
+        function createDefaultSeasonButtons() {
+            seasonsContainer.innerHTML = '';
+            
+            const seasonBtn = document.createElement('button');
+            seasonBtn.className = 'season-btn active';
+            seasonBtn.textContent = 'Season 1';
+            seasonBtn.dataset.season = 1;
+            
+            seasonBtn.addEventListener('click', async () => {
+                currentSeason = 1;
+                currentEpisode = 1;
+                videoLoading.style.display = 'flex';
+                sourceStatusElement.style.display = 'none';
+                videoScrollContainer.innerHTML = '';
+                await tryVidSrc();
+            });
+            
+            seasonsContainer.appendChild(seasonBtn);
+        }
+        
+        // Load episodes for a season
+        async function loadSeasonEpisodes(season) {
+            try {
+                // Fetch season details
+                const url = `${TMDB_BASE_URL}/tv/${currentVideoId}/season/${season}?api_key=${TMDB_API_KEY}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                const episodeCount = data.episodes ? data.episodes.length : 20;
+                
+                // Show episodes section
+                episodesSection.style.display = 'block';
+                episodesTitle.textContent = `Season ${season} Episodes`;
+                episodesCount.textContent = `(${episodeCount} Episodes)`;
+                
+                // Create episode buttons
+                createEpisodeButtons(episodeCount);
+                
+            } catch (error) {
+                console.error('Error fetching season episodes:', error);
+                // Create default episode buttons
+                episodesSection.style.display = 'block';
+                episodesTitle.textContent = `Season ${season} Episodes`;
+                episodesCount.textContent = `(20 Episodes)`;
+                createEpisodeButtons(20);
+            }
+        }
+        
+        // Create episode buttons with vertical scroll
+        function createEpisodeButtons(count) {
+            episodesContainer.innerHTML = '';
+            
+            for (let i = 1; i <= count; i++) {
+                const episodeBtn = document.createElement('button');
+                episodeBtn.className = 'episode-btn';
+                if (i === currentEpisode) episodeBtn.classList.add('active');
+                episodeBtn.textContent = i;
+                episodeBtn.dataset.episode = i;
+                
+                episodeBtn.addEventListener('click', async () => {
+                    // Update current episode
+                    currentEpisode = parseInt(episodeBtn.dataset.episode);
+                    
+                    // Update active button
+                    document.querySelectorAll('.episode-btn').forEach(btn => btn.classList.remove('active'));
+                    episodeBtn.classList.add('active');
+                    
+                    // Scroll to active episode
+                    episodeBtn.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center',
+                        inline: 'center'
+                    });
+                    
+                    // Reload video with new episode
+                    videoLoading.style.display = 'flex';
+                    sourceStatusElement.style.display = 'none';
+                    videoScrollContainer.innerHTML = '';
+                    await tryVidSrc();
+                });
+                
+                episodesContainer.appendChild(episodeBtn);
+            }
+            
+            // Scroll to active episode
+            const activeEpisode = document.querySelector('.episode-btn.active');
+            if (activeEpisode) {
+                setTimeout(() => {
+                    activeEpisode.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center',
+                        inline: 'center'
+                    });
+                }, 100);
+            }
+        }
+        
+        // Helper functions
+        function getSortBy(category) {
+            const sortMap = {
+                'popular': 'popularity.desc',
+                'top_rated': 'vote_average.desc',
+                'airing': 'popularity.desc',
+                'upcoming': 'first_air_date.desc'
+            };
+            return sortMap[category] || 'popularity.desc';
+        }
+        
+        function getCurrentDate() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        
+        function getPlaceholderImage(title) {
+            const colors = ['1c1c3c', '2c2c5c', '3c3c7c', '4c4c9c'];
+            const colorIndex = title.length % colors.length;
+            const color = colors[colorIndex];
+            const encodedTitle = encodeURIComponent(title.substring(0, 20));
+            return `https://via.placeholder.com/200x300/${color}/ffffff?text=${encodedTitle}`;
+        }
+        
+        function showLoading(show) {
+            loadingIndicator.style.display = show ? 'inline-block' : 'none';
+        }
+        
+        function showError(message) {
+            animeListElement.innerHTML = `<div class="error-message">${message}</div>`;
+        }
+        
+        function updatePagination(page, total) {
+            currentPage = page;
+            totalPages = total > 500 ? 500 : total;
+            
+            currentPageElement.textContent = currentPage;
+            totalPagesElement.textContent = totalPages;
+            
+            prevPageButton.disabled = currentPage <= 1;
+            nextPageButton.disabled = currentPage >= totalPages;
+        }
+    </script>
+</body>
+</html>
